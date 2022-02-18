@@ -2,27 +2,15 @@ CREATE SCHEMA IF NOT EXISTS RestaurantApplication;
 USE RestaurantApplication;
 
 DROP TABLE IF EXISTS CreditCards;
-DROP TABLE IF EXISTS Users;
-DROP TABLE IF EXISTS Reviews;
-DROP TABLE IF EXISTS Recommendations;
-DROP TABLE IF EXISTS Restaurants;
-DROP TABLE IF EXISTS Companies;
 DROP TABLE IF EXISTS Reservations;
+DROP TABLE IF EXISTS Recommendations;
+DROP TABLE IF EXISTS Reviews;
+DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS SitDownRestaurant;
 DROP TABLE IF EXISTS TakeOutRestaurant;
 DROP TABLE IF EXISTS FoodCartRestaurant;
-
-CREATE TABLE CreditCards (
-  CardNumber INT,
-  Expiration TIMESTAMP,
-  UserName VARCHAR(255),
-  CONSTRAINT pk_CreditCards_CardNumber 
-	PRIMARY KEY (CardNumber),
-  CONSTRAINT fk_CreditCards_UserName
-    FOREIGN KEY (UserName)
-    REFERENCES Users(UserName)
-    ON UPDATE CASCADE ON DELETE CASCADE
-);
+DROP TABLE IF EXISTS Restaurants;
+DROP TABLE IF EXISTS Companies;
 
 CREATE TABLE Users (
 	UserName VARCHAR(225),
@@ -35,43 +23,15 @@ CREATE TABLE Users (
 		PRIMARY KEY (UserName)
 );
 
-CREATE TABLE Reviews (
-	ReviewId INT,
-    Created TIMESTAMP,
-    Content VARCHAR(225),
-    Rating DECIMAL,
-    UserName VARCHAR(225),
-    RestaurantId INT,
-    CONSTRAINT pk_Reviews_ReviewId 
-		PRIMARY KEY (ReviewId),
-	CONSTRAINT fk_Reviews_UserName
-		FOREIGN KEY (UserName)
-		REFERENCES Users(UserName)
-		ON UPDATE CASCADE ON DELETE SET NULL,
-	CONSTRAINT fk_Reviews_RestaurantId
-		FOREIGN KEY (RestaurantId)
-        REFERENCES Restaurants(RestaurantId)
-        ON UPDATE CASCADE ON DELETE SET NULL
-);
-
-CREATE TABLE Recommendations (
-	RecommendationId INT,
-    UserName VARCHAR(225),
-    RestaurantId INT,
-    CONSTRAINT pk_Recommendations_RecommendationId
-		PRIMARY KEY (RecommendationId),
-	CONSTRAINT fk_Recommendations_UserName
-		FOREIGN KEY (UserName)
-        REFERENCES Users(UserName)
-        ON UPDATE CASCADE ON DELETE SET NULL,
-	CONSTRAINT fk_Recommendations_RestaurantId
-		FOREIGN KEY (RestaurantId)
-        REFERENCES Restaurants(RestaurantId)
-        ON UPDATE CASCADE ON DELETE SET NULL
+CREATE TABLE Companies (
+	CompanyName VARCHAR(225),
+    About VARCHAR(225),
+    CONSTRAINT pk_Companies_CompanyName 
+		PRIMARY KEY (CompanyName)
 );
 
 CREATE TABLE Restaurants (
-	RestaurantId INT,
+	RestaurantId INT AUTO_INCREMENT,
     Name VARCHAR(225),
     Description VARCHAR(225),
     Menu VARCHAR(225),
@@ -92,15 +52,55 @@ CREATE TABLE Restaurants (
         ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE TABLE Companies (
-	CompanyName VARCHAR(225),
-    About VARCHAR(225),
-    CONSTRAINT pk_Companies_CompanyName 
-		PRIMARY KEY (CompanyName)
+CREATE TABLE CreditCards (
+	CardNumber BIGINT,
+	Expiration TIMESTAMP,
+	UserName VARCHAR(255),
+	CONSTRAINT pk_CreditCards_CardNumber 
+		PRIMARY KEY (CardNumber),
+	CONSTRAINT fk_CreditCards_UserName
+		FOREIGN KEY (UserName)
+		REFERENCES Users(UserName)
+		ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE Reviews (
+	ReviewId INT AUTO_INCREMENT,
+    Created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Content VARCHAR(225),
+    Rating DECIMAL,
+    UserName VARCHAR(225),
+    RestaurantId INT,
+    CONSTRAINT pk_Reviews_ReviewId 
+		PRIMARY KEY (ReviewId),
+	CONSTRAINT fk_Reviews_UserName
+		FOREIGN KEY (UserName)
+		REFERENCES Users(UserName)
+		ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT fk_Reviews_RestaurantId
+		FOREIGN KEY (RestaurantId)
+        REFERENCES Restaurants(RestaurantId)
+        ON UPDATE CASCADE ON DELETE SET NULL
+);
+
+CREATE TABLE Recommendations (
+	RecommendationId INT AUTO_INCREMENT,
+    UserName VARCHAR(225),
+    RestaurantId INT,
+    CONSTRAINT pk_Recommendations_RecommendationId
+		PRIMARY KEY (RecommendationId),
+	CONSTRAINT fk_Recommendations_UserName
+		FOREIGN KEY (UserName)
+        REFERENCES Users(UserName)
+        ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT fk_Recommendations_RestaurantId
+		FOREIGN KEY (RestaurantId)
+        REFERENCES Restaurants(RestaurantId)
+        ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE Reservations (
-	ReservationId INT,
+	ReservationId INT AUTO_INCREMENT,
     Start TIMESTAMP,
     End TIMESTAMP,
     Size INT,
@@ -126,7 +126,7 @@ CREATE TABLE SitDownRestaurant (
     CONSTRAINT fk_SitDownRestaurant_RestaurantId
 		FOREIGN KEY (RestaurantId)
         REFERENCES Restaurants (RestaurantId)
-        ON UPDATE CASCADE ON DELETE SET NULL
+        ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE TakeOutRestaurant (
@@ -137,7 +137,7 @@ CREATE TABLE TakeOutRestaurant (
     CONSTRAINT fk_TakeOutRestaurant_RestaurantId
 		FOREIGN KEY (RestaurantId)
         REFERENCES Restaurants (RestaurantId)
-        ON UPDATE CASCADE ON DELETE SET NULL
+        ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE FoodCartRestaurant (
@@ -148,11 +148,5 @@ CREATE TABLE FoodCartRestaurant (
     CONSTRAINT fk_FoodCartRestaurant_RestaurantId
 		FOREIGN KEY (RestaurantId)
         REFERENCES Restaurants (RestaurantId)
-        ON UPDATE CASCADE ON DELETE SET NULL
+        ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-
-
-
-
-
